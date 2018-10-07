@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 from __future__ import division
 
 import tensorflow as tf
@@ -45,19 +45,20 @@ prep_time_list = []
 pred_time_list = []
 tot_time_list = []
 
-#Initialize the desired number of bandwidth co-runners with the given access type
-numCR = int(sys.argv[2]) + 1
-if numCR > 1:
-    numCR2 = numCR - 1
-    
+# Initialize the desired number of bandwidth co-runners with the given access type
+numCR = int(sys.argv[2])
+
+# For Jetson TX-2 Only
+endCore = 5
+if numCR:
     access = sys.argv[3]
     accessCap = access.capitalize()
 
-    folderName = "+{}{}CR".format(numCR2, accessCap)
+    folderName = "+{}{}CR".format(numCR, accessCap)
     os.system('mkdir datafiles/{}CR/{}'.format(accessCap, folderName))
 
-    for i in range(1,numCR):
-        os.system('bandwidth -a {} -m 16384 -t 10000 -c {} &'.format(access,i))
+    for i in range(numCR):
+        os.system('chrt -f 10 bandwidth -a {} -m 16384 -t 10000 -c {} &'.format(access, (endCore - i)))
 
 #Process all epochs
 for epoch_id in epoch_ids:
@@ -98,13 +99,13 @@ for epoch_id in epoch_ids:
                 tot_time_list.append(tot_time)
                 machine_steering.append(deg)
                 curFrame += 1
-        
+
     cap.release()
 
     fps = frame_count / (time.time() - time_start)
-    
+
     print 'completed inference, total frames: {}, average fps: {} Hz'.format(frame_count, round(fps, 1))
-    
+
 #Interrupt all bandwidth co-runners
 if numCR > 1:
         os.system('killall -SIGINT bandwidth')
@@ -119,4 +120,4 @@ print "99.9pct:", np.percentile(tot_time_list, 99.9)
 print "99pct:", np.percentile(tot_time_list, 99)
 print "min:", np.min(tot_time_list)
 print "median:", np.median(tot_time_list)
-print "stdev:", np.std(tot_time_list) 
+print "stdev:", np.std(tot_time_list)
