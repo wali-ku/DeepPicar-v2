@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 from __future__ import division
 
 import os
@@ -26,10 +26,10 @@ actuator="actuator-drv8835"
 #   "model-5conv_3fc-home_night.ckpt" <-- kitchen@night
 ##########################################################
 model="model-5conv_3fc"
-model_load_file="model-5conv_3fc-home_night.ckpt"
-model_load_file2="model-5conv_3fc-home_night.ckpt"
-model_load_file3="model-5conv_3fc-home_night.ckpt"
-model_load_file4="model-5conv_3fc-home_night.ckpt"
+model_load_file="model-5conv_3fc-ittc_room.ckpt"
+model_load_file2="model-5conv_3fc-ittc_room.ckpt"
+model_load_file3="model-5conv_3fc-ittc_room.ckpt"
+model_load_file4="model-5conv_3fc-ittc_room.ckpt"
 model_save_file=model_load_file
 
 ##########################################################
@@ -41,7 +41,7 @@ img_height = 66
 img_width = 200
 img_channels = 3
 write_summary = True
-shuffle_training = True 
+shuffle_training = True
 use_category_normal = True # if ture, center/curve images
                            # are equally selected.
 use_picar_mini = True # visualization fix for picar mini
@@ -59,8 +59,8 @@ if not os.path.isdir(out_dir):
     os.makedirs(out_dir)
 
 epochs = OrderedDict()
-epochs['train'] = range(106, 110) # range(30, 50) + range(60, 68) 
-epochs['val']   = range(110, 112) # range(50, 60) + range(68, 70)
+epochs['train'] = [1,3,5,7,9,11]# range(106, 110) # range(30, 50) + range(60, 68)
+epochs['val']   = [2,4,6,8,10]# range(110, 112) # range(50, 60) + range(68, 70)
 
 # data description
 # range(30, 60)        # ittc building. michael. resynchronized
