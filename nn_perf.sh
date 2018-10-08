@@ -5,7 +5,7 @@
 board=${1}
 dataDir="datafiles/perf/${board}"
 
-dnnThreads=(2 3 4)
+dnnThreads=(4)
 corunners=3
 dnnPrio=15
 
