@@ -2,9 +2,10 @@
 
 . funcs.sh
 
-dataDir="datafiles/perf"
+board=${1}
+dataDir="datafiles/perf/${board}"
 
-dnnThreads=1
+dnnThreads=(2 3 4)
 corunners=3
 dnnPrio=15
 
@@ -16,30 +17,34 @@ export CUDA_VISIBLE_DEVICES=''
 # Set trace params
 setup
 
-# Run experiment without co-runners
 echo "########## Starting Experiment..."
-echo "========== Executing DNN Unlocked (Solo)"
-chrt -f ${dnnPrio} python test-model.py ${dnnThreads} 0 		  \
-| tee ${dataDir}/nn${dnnThreads}_unlocked.solo
-echo "========== Run Complete..."
-echo "========== Waiting 5 seconds..."
-echo
-sleep 5
+for nnCnt in ${dnnThreads[@]}; do
+	# Run experiment without co-runners
+	echo "========== [NN: ${nnCnt}] Executing DNN Unlocked (Solo)"
+	chrt -f ${dnnPrio} python test-model.py ${nnCnt} 0 		       \
+	| tee ${dataDir}/nn${nnCnt}_unlocked.solo
+	echo "========== Run Complete..."
+	echo "========== Waiting 2 seconds..."
+	echo
+	sleep 2
 
-# Run experiment with co-runners
-echo "========== Executing DNN Unlocked (Corun)"
-chrt -f ${dnnPrio} python test-model.py ${dnnThreads} ${corunners} write  \
-| tee ${dataDir}/nn${dnnThreads}_unlocked.corun${corunners}
-echo "========== Run Complete..."
-echo "========== Waiting 5 seconds..."
-echo
-sleep 5
+	# Run experiment with co-runners
+	echo "========== [NN: ${nnCnt}] Executing DNN Unlocked (Corun)"
+	chrt -f ${dnnPrio} python test-model.py ${nnCnt} ${corunners} write    \
+	| tee ${dataDir}/nn${nnCnt}_unlocked.corun${corunners}
+	echo "========== Run Complete..."
+	echo "========== Waiting 2 seconds..."
+	echo
+	sleep 2
 
-# Run experiment with co-runners and gang-lock
-echo "========== Executing DNN Locked (Corun)"
-set_rt_lock yes
-chrt -f ${dnnPrio} python test-model.py ${dnnThreads} ${corunners} write  \
-| tee ${dataDir}/nn${dnnThreads}_locked.corun${corunners}
-set_rt_lock no
-echo "========== Run Complete..."
-echo "========== Experiment Complete..."
+	# Run experiment with co-runners and gang-lock
+	echo "========== [NN: ${nnCnt}] Executing DNN Locked (Corun)"
+	set_rt_lock yes
+	chrt -f ${dnnPrio} python test-model.py ${nnCnt} ${corunners} write    \
+	| tee ${dataDir}/nn${nnCnt}_locked.corun${corunners}
+	set_rt_lock no
+	echo "========== Run Complete..."
+	echo "========== Experiment Complete..."
+	echo "========== Waiting 2 seconds..."
+	sleep 2
+done
