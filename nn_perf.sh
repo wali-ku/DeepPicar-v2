@@ -12,8 +12,8 @@ NCL='\033[0m'
 board=${1}
 dataDir="datafiles/perf/${board}"
 
-dnnThreads=(3)
-dnnCores=("0,3,4")
+dnnThreads=(1)
+dnnCores=("0")
 corunners=3
 dnnPrio=15
 corunPrio=10
