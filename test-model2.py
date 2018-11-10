@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 from __future__ import division
 
 import tensorflow as tf
@@ -82,7 +82,7 @@ for epoch_id in epoch_ids:
     cap.release()
 
     fps = frame_count / (time.time() - time_start)
-    
+
     print 'completed inference, total frames: {}, average fps: {} Hz'.format(frame_count, round(fps, 1))
 
     # print "Machine Steering:", machine_steering
@@ -90,7 +90,7 @@ for epoch_id in epoch_ids:
     # print 'performing visualization...'
     # visualize.visualize(epoch_id, machine_steering, params.out_dir,
     #                     verbose=True, frame_count_limit=None)
-    
+
 print "count:", len(tot_time_list)
 print "mean:", np.mean(tot_time_list)
 print "max:", np.max(tot_time_list)
@@ -100,4 +100,4 @@ print "99.9pct:", np.percentile(tot_time_list, 99.9)
 print "99pct:", np.percentile(tot_time_list, 99)
 print "min:", np.min(tot_time_list)
 print "median:", np.median(tot_time_list)
-print "stdev:", np.std(tot_time_list)    
+print "stdev:", np.std(tot_time_list)
