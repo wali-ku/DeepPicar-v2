@@ -49,7 +49,7 @@ tot_time_list = []
 numCR = int(sys.argv[2])
 
 # For Jetson TX-2 Only
-endCore = 5
+endCore = 7
 if numCR:
     access = sys.argv[3]
     accessCap = access.capitalize()
