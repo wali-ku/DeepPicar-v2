@@ -16,50 +16,50 @@ def analyze (filename):
                 inferTime.append (time)
 
     sortedTimes = sorted (inferTime)
-    cutoff = np.percentile (sortedTimes, 98)
+    cutoff = np.percentile (sortedTimes, 99.5)
     filteredTimes = [t for t in sortedTimes if t < cutoff]
     return (filteredTimes)
 
-def plotData (data, platform, nn):
+def plotData (data, platform):
     num_bins = 1000
-    lineType = {'ltimes': 'b', 'utimes': 'r', 'stimes': 'y^'}
-    lineLabels = {'ltimes': 'Gang', 'utimes': 'CoSched', 'stimes': 'Solo'}
+    lineType = {'hp': 'b--', 'hpr': 'b', 'lp': 'r--', 'lpr': 'r'}
+    lineLabels = {'hp': 'HP', 'hpr': 'HP (RTG)', 'lp': 'LP', 'lpr': 'LP (RTG)'}
     fontSizeLabels = 'x-large'
     fontWeightLabels = 'bold'
     margins = 0.15
     xLimLeft = min ([min (x) for x in data.values ()])
     xLimRight = max ([max (x) for x in data.values ()])
     xRange = xLimRight - xLimLeft
-    xLimLeft = 0 if platform == 'pi' else 5#xLimLeft - margins * xRange
-    xLimRight = 850 if platform == 'pi' else 40#xLimRight + margins * xRange
+    xLimLeft = 0 if 'pi' in platform else 5#xLimLeft - margins * xRange
+    xLimRight = 850 if 'pi' in platform else 15#xLimRight + margins * xRange
 
     for exp in data:
         counts, bin_edges = np.histogram (data [exp], bins = num_bins, normed = True)
         cdf = np.cumsum (counts)
-        plt.plot (bin_edges [1:], cdf/cdf[-1], lineType [exp], lw = 2.5, label = lineLabels [exp])
-    plt.plot ([xLimLeft, xLimRight], [0.95, 0.95], 'k--', lw = 1)
+        plt.plot (bin_edges [1:], cdf/cdf[-1], lineType [exp], lw = 2.0, label = lineLabels [exp])
+    plt.plot ([xLimLeft, xLimRight], [1, 1], 'k--', lw = 1)
     plt.xlim (xLimLeft, xLimRight)
     plt.ylim (0, 1.15)
     plt.xticks (fontsize = 'large', fontweight = 'bold')
     plt.yticks (fontsize = 'large', fontweight = 'bold')
     plt.ylabel ('CDF', fontsize = fontSizeLabels, fontweight = fontWeightLabels)
     plt.xlabel ('DNN Inference Time (msec)', fontsize = fontSizeLabels, fontweight = fontWeightLabels)
-    plt.legend (loc = 'upper center', ncol = 3, fontsize = 'large')
+    plt.title ('DNN Performance (1N x 6C) | 2 Gangs', fontweight = 'bold', fontsize = 'x-large')
+    plt.legend (loc = 'upper center', ncol = 4, fontsize = 'large')
     plt.grid ()
-    plt.savefig ('%s_nn%s.pdf' % (platform, nn), bbox_inches = 'tight')
+    plt.savefig ('%s_2n6c.pdf' % platform, bbox_inches = 'tight')
 
     return
 
 def main ():
     data = {}
     platform = sys.argv [1]
-    nn = sys.argv [2]
-    cc = 3
-    data ['ltimes'] = analyze ('%s/nn%s_%s%d' % (platform, nn, 'locked.corun', cc))
-    data ['utimes'] = analyze ('%s/nn%s_%s%d' % (platform, nn, 'unlocked.corun', cc))
-    data ['stimes'] = analyze ('%s/nn%s_%s' % (platform, nn, 'unlocked.solo'))
+    data ['hp']  = analyze ('x2_n1c6_hp.perf')
+    data ['hpr'] = analyze ('x2_n1c6_hp_rg.perf')
+    data ['lp']  = analyze ('x2_n1c6_lp.perf')
+    data ['lpr'] = analyze ('x2_n1c6_lp_rg.perf')
 
-    plotData (data, platform, nn)
+    plotData (data, platform)
 
     return
 
