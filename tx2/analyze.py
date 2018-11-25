@@ -26,7 +26,7 @@ def plotData (data):
     # Absolute performance plot
     p = plt.subplot (2, 1, 1)
     xticks = sorted ([tick + 0.5 for key in data.keys () for tick in data [key]['ticks']])
-    xtickNames = [tick for key in data.keys () for tick in range (8)]
+    xtickNames = [tick for key in data.keys () for tick in range (6)]
 
     for key in data.keys ():
         plt.bar (data [key]['ticks'], data [key]['perf'], color = 'white',
@@ -38,7 +38,7 @@ def plotData (data):
     plt.xticks ([])
     plt.legend (ncol = 4, loc = 'upper center', fontsize = 'large')
     plt.xlim (0, max (xticks) + 0.5)
-    plt.ylim (0, 20)
+    plt.ylim (0, 100)
 
     # Normalized performance plot
     p = plt.subplot (2, 1, 2)
@@ -50,24 +50,24 @@ def plotData (data):
     plt.gca ().yaxis.grid (True, linestyle = '--')
     plt.ylabel ('Normalized DNN Performance', fontweight = 'bold', fontsize = 'large')
     plt.xlabel ('Number of Bandwidth Corunners', fontweight = 'bold', fontsize = 'large')
-    plt.suptitle ('Memory Interference Study\nJetson-Xavier', fontsize = 'xx-large', fontweight = 'bold')
+    plt.suptitle ('Memory Interference Study\nJetson-TX2', fontsize = 'xx-large', fontweight = 'bold')
     plt.xticks (xticks, xtickNames)
     plt.xlim (0, max (xticks) + 0.5)
-    plt.ylim (0, 3)
-    fig.savefig ('xavier_bw.pdf', bbox_inches = 'tight')
+    plt.ylim (0, 5)
+    fig.savefig ('tx2_bw.pdf', bbox_inches = 'tight')
 
     return
 
 def main ():
-    data = {'CR': {'perf': [], 'norm': [], 'name': 'CPU (Read)',  'ticks': range (0, 8),    'hatch': 'xx'},
-            'CW': {'perf': [], 'norm': [], 'name': 'CPU (Write)', 'ticks': range (10, 18),  'hatch': '**'},
-            'GR': {'perf': [], 'norm': [], 'name': 'GPU (Read)',  'ticks': range (20, 28),  'hatch': '--'},
-            'GW': {'perf': [], 'norm': [], 'name': 'GPU (Write)', 'ticks': range (30, 38),  'hatch': '..'}}
+    data = {'CR': {'perf': [], 'norm': [], 'name': 'CPU (Read)',  'ticks': range (0, 6),    'hatch': 'xx'},
+            'CW': {'perf': [], 'norm': [], 'name': 'CPU (Write)', 'ticks': range (10, 16),  'hatch': '**'},
+            'GR': {'perf': [], 'norm': [], 'name': 'GPU (Read)',  'ticks': range (20, 26),  'hatch': '--'},
+            'GW': {'perf': [], 'norm': [], 'name': 'GPU (Write)', 'ticks': range (30, 36),  'hatch': '..'}}
 
-    data ['CR']['files'] = ['CPU_bw%d_read.perf'    % x for x in range (8)]
-    data ['CW']['files'] = ['CPU_bw%d_write.perf'   % x for x in range (8)]
-    data ['GR']['files'] = ['GPU_bw%d_read.perf'    % x for x in range (8)]
-    data ['GW']['files'] = ['GPU_bw%d_write.perf'   % x for x in range (8)]
+    data ['CR']['files'] = ['CPU_bw%d_read.perf'    % x for x in range (6)]
+    data ['CW']['files'] = ['CPU_bw%d_write.perf'   % x for x in range (6)]
+    data ['GR']['files'] = ['GPU_bw%d_read.perf'    % x for x in range (6)]
+    data ['GW']['files'] = ['GPU_bw%d_write.perf'   % x for x in range (6)]
 
     for scenario in data.keys ():
         for case in data [scenario]['files']:
